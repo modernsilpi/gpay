@@ -64,23 +64,24 @@ function onBuyClicked() {
     ],
   };
 
-  const options = {
-    requestShipping: true,
-    requestPayerName: true,
-    requestPayerPhone: true,
-    requestPayerEmail: true,
-    shippingType: 'shipping',
-  };
+  // const options = {
+  //   requestShipping: true,
+  //   requestPayerName: true,
+  //   requestPayerPhone: true,
+  //   requestPayerEmail: true,
+  //   shippingType: 'shipping',
+  // };
 
   let request = null;
   try {
-    request = new PaymentRequest(supportedInstruments, details, options);
+    request = new PaymentRequest(supportedInstruments, details);
   } catch (e) {
     alert("payment request error")
     console.log('Payment Request Error: ' + e.message);
     return;
   }
   if (!request) {
+    alert('Web payments are not supported in this browser.')
     console.log('Web payments are not supported in this browser.');
     return;
   }
@@ -97,12 +98,13 @@ function onBuyClicked() {
             if (options.ok) {
               return options.json();
             }
+            alert('Unable to calculate shipping options')
             console.log('Unable to calculate shipping options.');
           })
           .then(function(optionsJson) {
             if (optionsJson.status === 'success') {
               updateShipping(details, optionsJson.shippingOptions, resolve);
-            } else {
+            } else {0
               console.log('Unable to calculate shipping options.');
             }
           })
@@ -257,6 +259,7 @@ function processResponse(instrument) {
 function completePayment(instrument, result, msg) {
   instrument.complete(result)
       .then(function() {
+        alert('payment completed')
         console.log('Payment completes.');
         console.log(msg);
         document.getElementById('inputSection').style.display = 'none'
@@ -265,6 +268,7 @@ function completePayment(instrument, result, msg) {
             JSON.stringify(instrument, undefined, 2);
       })
       .catch(function(err) {
+        alert(err)
         console.log(err);
       });
 }
