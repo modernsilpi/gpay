@@ -76,6 +76,7 @@ function onBuyClicked() {
   try {
     request = new PaymentRequest(supportedInstruments, details, options);
   } catch (e) {
+    alert("payment request error")
     console.log('Payment Request Error: ' + e.message);
     return;
   }
@@ -130,6 +131,7 @@ function onBuyClicked() {
         showPaymentUI(request, result);
       })
       .catch((err) => {
+        alert('Error calling checkCanMakePayment')
         console.log('Error calling checkCanMakePayment: ' + err);
       });
 }
@@ -167,6 +169,7 @@ function checkCanMakePayment(request) {
         return result;
       })
       .catch((err) => {
+        alert('Error calling canMakePayment')
         console.log('Error calling canMakePayment: ' + err);
       });
 }
@@ -190,9 +193,11 @@ function showPaymentUI(request, canMakePayment) {
     window.clearTimeout(paymentTimeout);
     request.abort()
         .then(function() {
+          alert('Payment timed out after 20 minutes.')
           console.log('Payment timed out after 20 minutes.');
         })
         .catch(function() {
+          alert("Unable to abort, user is in the process of paying.")
           console.log('Unable to abort, user is in the process of paying.');
         });
   }, 20 * 60 * 1000); /* 20 minutes */
@@ -227,6 +232,7 @@ function processResponse(instrument) {
         if (buyResult.ok) {
           return buyResult.json();
         }
+        alert("Error sending instrument to server.")
         console.log('Error sending instrument to server.');
       })
       .then(function(buyResultJson) {
@@ -234,6 +240,7 @@ function processResponse(instrument) {
             instrument, buyResultJson.status, buyResultJson.message);
       })
       .catch(function(err) {
+        alert('Unable to process payment.')
         console.log('Unable to process payment. ' + err);
       });
 }
